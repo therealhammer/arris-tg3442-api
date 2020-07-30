@@ -102,8 +102,8 @@ def getDevices(session):
     for i in devices:
         if (i[4] == "true"):
             print("Device: " + i[0])
-            print("MAC: " + i[1])
-            print("IP: " + i[2])
+            print("  MAC: " + i[1])
+            print("  IP: " + i[2])
     return devices
         
     
