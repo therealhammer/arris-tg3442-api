@@ -14,7 +14,8 @@ def getOptions(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(description="Reboot Arris TG3442* cable router remotely.")
     parser.add_argument("-u", "--username", help="router login username", action='store', dest='username', default='admin')
     parser.add_argument("-p", "--password", help="router login password", action='store', dest='password', default='password')
-    parser.add_argument("-t", "--target", help="router IP address/url (prepended by http)", action='store', dest='url', default='http://192.168.100.1')
+    parser.add_argument("-t", "--target", help="router IP address/url (prepended by http)", action='store', dest='url', default='http://192.168.0.1')
+    parser.add_argument("-d", "--devices", help="Get a list of logged in devices with MAC and IP", action='store', dest='devices', default='n')
 
     if (len(args) == 0):
         parser.print_help()
@@ -93,17 +94,37 @@ def restart(session):
     session.put(f"{url}/php/ajaxSet_status_restart.php", data=json.dumps(restart_request_data))
 
 
+def getDevices(session):
+    deviceWeb = session.get(f"{url}/php/status_lan_data.php?&lanData%5BdhcpDevInfo%5D=&lanData%5B")
+    devices = json.loads(deviceWeb.text)['dhcpDevInfo']
+    print(json.loads(deviceWeb.text)['dhcpDevInfo'])
+    for i in devices:
+        if (i[4] == "true"):
+            print("Device: " + i[0])
+            print("MAC: " + i[1])
+            print("IP: " + i[2])
+    return devices
+        
+    
+
+
 if __name__ == "__main__":
     userArguments = getOptions()
 
     url = userArguments.url
     username = userArguments.username
     password = userArguments.password
+    devices = userArguments.devices
 
     session = requests.Session()
 
     login(session, url, username, password)
     print("Login successfull")
+    
+    if devices == "n":
+        print("Attempting restart - this can take a few minutes.")
+        restart(session)
+    else:
+        print("Attempt to get Devices list")
+        getDevices(session)
 
-    print("Attempting restart - this can take a few minutes.")
-    restart(session)
