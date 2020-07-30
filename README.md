@@ -1,6 +1,8 @@
 # arris-tg3442-api
 Python API to configure your Arris TG3442* cable modem/router remotely.
 
+Originally it was forked form arris-tg3442-reboot by diveflo which only provided reboot functionality. I want to develop its functionality over time
+
 ## Supported firmware versions
 Currently, the following firmware versions are supported:
  * AR01.01.117.01_091718_70.PC20.10
