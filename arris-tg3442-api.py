@@ -16,6 +16,7 @@ def getOptions(args=sys.argv[1:]):
     parser.add_argument("-p", "--password", help="router login password", action='store', dest='password', default='password')
     parser.add_argument("-t", "--target", help="router IP address/url (prepended by http)", action='store', dest='url', default='http://192.168.0.1')
     parser.add_argument("-d", "--devices", help="Get a list of logged in devices with MAC and IP", action='store', dest='devices', default='n')
+    parser.add_argument("-r", "--reboot", help="Reboot the router", action='store', dest='reboot', default='n')
 
     if (len(args) == 0):
         parser.print_help()
@@ -115,16 +116,19 @@ if __name__ == "__main__":
     username = userArguments.username
     password = userArguments.password
     devices = userArguments.devices
+    reboot = userArguments.reboot
 
     session = requests.Session()
 
     login(session, url, username, password)
     print("Login successfull")
     
-    if devices == "n":
+    if devices != "n":
+        print("Attempt to get Devices list")
+        getDevices(session)
+    elif reboot != "n":
         print("Attempting restart - this can take a few minutes.")
         restart(session)
     else:
-        print("Attempt to get Devices list")
-        getDevices(session)
+        print("Nothing to do. Stop program")
 
