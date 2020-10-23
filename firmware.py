@@ -47,6 +47,8 @@ class FirmwareEarly2019(Firmware):
     def get_csrf_nonce(self, login_response, key: bytes, iv: str):
         decCipher = AES.new(key, AES.MODE_CCM, iv)
         decCipher.update(bytes("nonce".encode()))
+        if (login_response["p_status"] == "Lockout"):
+           raise Exception(f"Locked out of system. Wait {login_response['p_waitTime']} minute/s.")
         decryptData = decCipher.decrypt(bytes.fromhex(login_response['encryptData']))
 
         return decryptData[:32].decode()

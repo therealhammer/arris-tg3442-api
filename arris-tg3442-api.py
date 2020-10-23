@@ -51,7 +51,7 @@ def login(session, url, username, password):
 
     login_data = modem.get_login_data(encrypt_data, username, salt, iv, associated_data)
 
-    r = session.put(
+    r = session.post(
         f"{url}/php/ajaxSet_Password.php",
         headers={
             "Content-Type": "application/json",
@@ -92,7 +92,11 @@ def _unpad(s):
 
 def restart(session):
     restart_request_data = {"RestartReset": "Restart"}
-    session.put(f"{url}/php/ajaxSet_status_restart.php", data=json.dumps(restart_request_data))
+    r = session.post(f"{url}/php/ajaxSet_status_restart.php", data=json.dumps(restart_request_data))
+    if r.ok:
+        print("Restart successful")
+    else:
+        print(f"Restart failed. Response code {r.status_code}")
 
 
 def getDevices(session):
